@@ -15,7 +15,7 @@ namespace SudokuSolver
             int col = 0;
             int row = 0;
 
-            foreach (char character in boardString)
+            foreach (char character in boardString) // Konstruktorn fyller vår array direkt
             {
                 int currentNumber = int.Parse(character.ToString());
                 Board[col, row] = currentNumber;
@@ -28,12 +28,12 @@ namespace SudokuSolver
             }
         }
 
-        public void Solve()
+        public void Solve() // Huvudmetoden, körs när programmet startar
         {
             BoardAsText(Board);
         }
 
-        public bool IsboardFull(int[,] board)
+        public bool IsboardFull(int[,] board) // Kollar om brädet innehåller en tom plats
         {
             for (int row = 0; row < 9; row++)
             {
@@ -46,7 +46,7 @@ namespace SudokuSolver
                 }
             }
             return true;
-        }
+        } 
 
         public void FindPossibleEntries(int[,] board, int row, int col)
         {
@@ -116,7 +116,7 @@ namespace SudokuSolver
             return board;
         }
 
-        public void BoardAsText(int[,] board)
+        public void BoardAsText(int[,] board) // Printar ut brädet
         {
             for (int row = 0; row < 9; row++)
             {
@@ -126,8 +126,15 @@ namespace SudokuSolver
                 }
                 for (int col = 0; col < 9; col++)
                 {
-                    Console.Write(" " + board[row, col] + " ");
+                    if (board[row, col] == 0)
+                    {
+                        Console.Write(" _ ");
+                    }
+                    else
+                    {
+                        Console.Write(" " + board[row, col] + " ");
 
+                    }
                     if (col == 2 || col == 5)
                     {
                         Console.Write("|");
@@ -138,7 +145,7 @@ namespace SudokuSolver
                     }
                 }
             }
-        }
+        } 
     }
 }
 
