@@ -30,14 +30,17 @@ namespace SudokuSolver
 
         public void Solve() // Huvudmetoden, körs när programmet startar
         {
-            BoardAsText(Board);
+            BoardAsText();
+            Console.WriteLine(CheckBox(3, 3, 8));
+            Console.WriteLine(CheckRow(0, 1));
+            Console.WriteLine(CheckColumn(3, 3));
         }
 
-        public bool CheckRow(int[,] board, int row, int currentNumber)
+        public bool CheckRow(int row, int currentNumber)
         {
             for (int col = 0; col < 9; col++)
             {
-                if (board[row, col] == currentNumber)
+                if (Board[row, col] == currentNumber)
                 {
                     return false;
                 }
@@ -45,16 +48,84 @@ namespace SudokuSolver
             return true;
         }
 
-        public bool CheckColumn(int[,] board, int col, int currentNumber)
+        public bool CheckColumn(int col, int currentNumber)
         {
             for (int row = 0; row < 9; row++)
             {
-                if (board[row, col] == currentNumber)
+                if (Board[row, col] == currentNumber)
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        public bool CheckBox(int row, int column, int currentNumber)
+        {
+            int topLeftRow = (row / 3) * 3;
+            int topLeftColumn = (column / 3) * 3;
+
+            for (int i = topLeftRow; i < topLeftRow + 3; i++)
+            {
+                for (int j = topLeftColumn; j < topLeftColumn + 3; j++)
+                {
+                    if (Board[i, j] == currentNumber)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public int[] GetNumbersInRow(int row)
+        {
+            List<int> result = new List<int>();
+            for (int i = 0; i < 9; i++)
+            {
+                result.Add(Board[row, i]);
+            }
+
+            return result.ToArray();
+        }
+
+        private int[] GetNumbersInColumn(int column)
+        {
+            List<int> result = new List<int>();
+            for (int i = 0; i < 9; i++)
+            {
+                result.Add(Board[i, column]);
+            }
+
+            return result.ToArray();
+        }
+
+        public void FindPossibleNumbers(int row, int column)
+        {
+            List<int> result = new List<int>{1,2,3,4,5,6,7,8,9};
+            int[] numbersInRow = GetNumbersInRow(row);
+            int[] numbersInColumn = GetNumbersInColumn(column);
+
+            foreach (int number in numbersInRow)
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    if (Board[row, i] == number)
+                    {
+                        result.Remove(number);
+                    }
+                }
+            }
+            foreach (int number in numbersInColumn)
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    if (Board[i, column] == number)
+                    {
+                        result.Remove(number);
+                    }
+                }
+            }
         }
 
         public bool IsboardFull(int[,] board) // Kollar om brädet innehåller en tom plats
@@ -70,7 +141,7 @@ namespace SudokuSolver
                 }
             }
             return true;
-        } 
+        }
 
         public void FindPossibleEntries(int[,] board, int row, int col)
         {
@@ -112,6 +183,39 @@ namespace SudokuSolver
 
         }
 
+       
+
+        public void BoardAsText() // Printar ut brädet
+        {
+            for (int row = 0; row < 9; row++)
+            {
+                if (row == 3 || row == 6)
+                {
+                    Console.Write(" ---------------------------\n");
+                }
+                for (int col = 0; col < 9; col++)
+                {
+                    if (Board[row, col] == 0)
+                    {
+                        Console.Write(" _ ");
+                    }
+                    else
+                    {
+                        Console.Write(" " + Board[row, col] + " ");
+
+                    }
+                    if (col == 2 || col == 5)
+                    {
+                        Console.Write("|");
+                    }
+                    if (col == 8)
+                    {
+                        Console.WriteLine();
+                    }
+                }
+            }
+        }
+
         public int[,] FillBoard(string boardString) // Ersatte denna genom att använda konstruktorn istället
         {
             int[,] board = new int[9, 9];
@@ -139,37 +243,6 @@ namespace SudokuSolver
             }
             return board;
         }
-
-        public void BoardAsText(int[,] board) // Printar ut brädet
-        {
-            for (int row = 0; row < 9; row++)
-            {
-                if (row == 3 || row == 6)
-                {
-                    Console.Write(" ---------------------------\n");
-                }
-                for (int col = 0; col < 9; col++)
-                {
-                    if (board[row, col] == 0)
-                    {
-                        Console.Write(" _ ");
-                    }
-                    else
-                    {
-                        Console.Write(" " + board[row, col] + " ");
-
-                    }
-                    if (col == 2 || col == 5)
-                    {
-                        Console.Write("|");
-                    }
-                    if (col == 8)
-                    {
-                        Console.WriteLine();
-                    }
-                }
-            }
-        } 
-    }
-}
+    }//Class
+} //Namespace
 
