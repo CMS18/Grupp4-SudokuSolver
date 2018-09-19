@@ -8,18 +8,29 @@ namespace SudokuSolver
 {
     class Sudoku
     {
-        public string BoardString { get; set; }
         public int[,] Board = new int[9, 9];
 
         public Sudoku(string boardString)
         {
-            BoardString = boardString;
+            int col = 0;
+            int row = 0;
+
+            foreach (char character in boardString)
+            {
+                int currentNumber = int.Parse(character.ToString());
+                Board[col, row] = currentNumber;
+                row++;
+                if (row == 9)
+                {
+                    col++;
+                    row = 0;
+                }
+            }
         }
 
         public void Solve()
         {
-            Board = FillBoard(BoardString);
-            PrintSudokuBoard(Board);
+            BoardAsText(Board);
         }
 
         public bool IsboardFull(int[,] board)
@@ -77,22 +88,19 @@ namespace SudokuSolver
 
         }
 
-        public int[,] FillBoard(string boardString)
+        public int[,] FillBoard(string boardString) // Ersatte denna genom att använda konstruktorn istället
         {
             int[,] board = new int[9, 9];
 
             if (boardString.Length == 81)
             {
-                char[] boardCharArray = boardString.ToCharArray();
-
                 int col = 0;
                 int row = 0;
 
-                foreach (char character in boardCharArray)
+                foreach (char character in boardString)
                 {
                     int currentNumber = int.Parse(character.ToString());
                     board[col, row] = currentNumber;
-
                     row++;
                     if (row == 9)
                     {
@@ -108,28 +116,29 @@ namespace SudokuSolver
             return board;
         }
 
-        public void PrintSudokuBoard(int[,] board)
+        public void BoardAsText(int[,] board)
         {
-            Console.Write("+-----------------------------------+\n");
-
-            for (int col = 0; col < 9; col++)
+            for (int row = 0; row < 9; row++)
             {
-                Console.Write("|");
-
-                for (int row = 0; row < 9; row++)
+                if (row == 3 || row == 6)
                 {
-                    Console.Write(" " + board[col, row] + " |");
+                    Console.Write(" ---------------------------\n");
+                }
+                for (int col = 0; col < 9; col++)
+                {
+                    Console.Write(" " + board[row, col] + " ");
 
-                    if (row == 8)
+                    if (col == 2 || col == 5)
                     {
-                        Console.Write("\n+-----------------------------------+");
+                        Console.Write("|");
+                    }
+                    if (col == 8)
+                    {
+                        Console.WriteLine();
                     }
                 }
-                Console.WriteLine();
             }
         }
-
-
     }
 }
 
