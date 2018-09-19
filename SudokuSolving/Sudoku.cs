@@ -40,9 +40,6 @@ namespace SudokuSolver
                 PlaceMatchingNumber();
             }
 
-            Console.WriteLine();
-            BoardAsText();
-
         }
 
         public void PlaceMatchingNumber()
@@ -62,7 +59,6 @@ namespace SudokuSolver
                             Board[row, col] = recievedNumber[0];
                             couldPlaceNumber = true;
                             BoardAsText();
-
                         }
                     }
                 }
