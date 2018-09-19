@@ -31,9 +31,63 @@ namespace SudokuSolver
         public void Solve() // Huvudmetoden, körs när programmet startar
         {
             BoardAsText();
-            Console.WriteLine(CheckBox(3, 3, 8));
-            Console.WriteLine(CheckRow(0, 1));
-            Console.WriteLine(CheckColumn(3, 3));
+            Console.WriteLine();
+            Console.WriteLine();
+
+            while (IsboardFull() == false)
+            {
+                PlaceMatchingNumber();
+            }
+            Console.WriteLine();
+            BoardAsText();
+
+        }
+
+        public void PlaceMatchingNumber()
+        {
+            bool couldPlaceNumber = false;
+
+            for (int row = 0; row < 9; row++)
+            {
+                for (int col = 0; col < 9; col++)
+                {
+                    if (Board[row, col] == 0)
+                    {
+                        int[] recievedNumber = FindPossibleNumbers(row, col);
+
+                        if (recievedNumber.Length == 1 && CheckBox(row, col, recievedNumber[0]))
+                        {
+                            Board[row, col] = recievedNumber[0];
+                            couldPlaceNumber = true;
+                        }
+                    }
+                }
+            }
+            if (couldPlaceNumber == false)
+            {
+                PlaceOddNumber();
+            }
+        }
+
+        public void PlaceOddNumber()
+        {
+            int currentNumber = 1;
+
+            for (int row = 0; row < 9; row++)
+            {
+                for (int col = 0; col < 9; col++)
+                {
+                    if (Board[row, col] == 0)
+                    {
+                        if (CheckRow(row, currentNumber) && CheckColumn(col, currentNumber) && CheckBox(row, col, currentNumber))
+                        {
+                            Board[row, col] = currentNumber;
+                            
+                        }
+                    }
+                }
+                currentNumber++;
+            }
         }
 
         public bool CheckRow(int row, int currentNumber)
@@ -100,9 +154,9 @@ namespace SudokuSolver
             return result.ToArray();
         }
 
-        public void FindPossibleNumbers(int row, int column)
+        public int[] FindPossibleNumbers(int row, int column)
         {
-            List<int> result = new List<int>{1,2,3,4,5,6,7,8,9};
+            List<int> result = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             int[] numbersInRow = GetNumbersInRow(row);
             int[] numbersInColumn = GetNumbersInColumn(column);
 
@@ -126,15 +180,18 @@ namespace SudokuSolver
                     }
                 }
             }
+            return result.ToArray();
         }
 
-        public bool IsboardFull(int[,] board) // Kollar om brädet innehåller en tom plats
+
+
+        public bool IsboardFull() // Kollar om brädet innehåller en tom plats
         {
             for (int row = 0; row < 9; row++)
             {
                 for (int col = 0; col < 9; col++)
                 {
-                    if (board[row, col] == 0)
+                    if (Board[row, col] == 0)
                     {
                         return false;
                     }
@@ -142,48 +199,6 @@ namespace SudokuSolver
             }
             return true;
         }
-
-        public void FindPossibleEntries(int[,] board, int row, int col)
-        {
-            int[,] possibilitiesArray = new int[9, 9];
-
-            for (int y = 0; y < 9; y++) //Fyller vår possibilitesArray med 0or som grund.
-            {
-                for (int x = 0; x < 9; x++)
-                {
-                    possibilitiesArray[y, x] = 0;
-                }
-            }
-            for (int x = 0; x < 9; x++) //Kollar vågrätt om innehållet är en 0a, annars sätts indexet till en 1a.
-            {
-                if (board[row, x] != 0)
-                {
-                    possibilitiesArray[row, x] = 1;
-                }
-            }
-            for (int y = 0; y < 9; y++) //Kollar horisontellt om innehållet är en 0a, annars sätts indexet till en 1a.
-            {
-                if (board[y, col] != 0)
-                {
-                    possibilitiesArray[y, col] = 1;
-                }
-            }
-
-            int k = 0;
-            int l = 0;
-
-            if (row >= 0 && row <= 2) k = 0;
-            else if (row >= 3 && row <= 5) k = 3;
-            else k = 6;
-
-            if (col >= 0 && col <= 2) l = 0;
-            else if (col >= 3 && col <= 5) l = 3;
-            else l = 6;
-
-
-        }
-
-       
 
         public void BoardAsText() // Printar ut brädet
         {
@@ -242,6 +257,44 @@ namespace SudokuSolver
                 Console.WriteLine("Incorrect amount of numbers in boardstring!");
             }
             return board;
+        }
+
+        public void FindPossibleEntries(int[,] board, int row, int col)
+        {
+            int[,] possibilitiesArray = new int[9, 9];
+
+            for (int y = 0; y < 9; y++) //Fyller vår possibilitesArray med 0or som grund.
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    possibilitiesArray[y, x] = 0;
+                }
+            }
+            for (int x = 0; x < 9; x++) //Kollar vågrätt om innehållet är en 0a, annars sätts indexet till en 1a.
+            {
+                if (board[row, x] != 0)
+                {
+                    possibilitiesArray[row, x] = 1;
+                }
+            }
+            for (int y = 0; y < 9; y++) //Kollar horisontellt om innehållet är en 0a, annars sätts indexet till en 1a.
+            {
+                if (board[y, col] != 0)
+                {
+                    possibilitiesArray[y, col] = 1;
+                }
+            }
+
+            int k = 0;
+            int l = 0;
+
+            if (row >= 0 && row <= 2) k = 0;
+            else if (row >= 3 && row <= 5) k = 3;
+            else k = 6;
+
+            if (col >= 0 && col <= 2) l = 0;
+            else if (col >= 3 && col <= 5) l = 3;
+            else l = 6;
         }
     }//Class
 } //Namespace
