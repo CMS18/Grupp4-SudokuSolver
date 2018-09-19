@@ -247,7 +247,7 @@ namespace SudokuSolver
             }
         }
 
-        public int[,] FillBoard(string boardString) // Ersatte denna genom att använda konstruktorn istället
+        /*public int[,] FillBoard(string boardString) // Ersatte denna genom att använda konstruktorn istället
         {
             int[,] board = new int[9, 9];
 
@@ -311,7 +311,7 @@ namespace SudokuSolver
             if (col >= 0 && col <= 2) l = 0;
             else if (col >= 3 && col <= 5) l = 3;
             else l = 6;
-        }
+        }*/
     }//Class
 } //Namespace
 
