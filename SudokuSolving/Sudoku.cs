@@ -33,6 +33,30 @@ namespace SudokuSolver
             BoardAsText(Board);
         }
 
+        public bool CheckRow(int[,] board, int row, int currentNumber)
+        {
+            for (int col = 0; col < 9; col++)
+            {
+                if (board[row, col] == currentNumber)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool CheckColumn(int[,] board, int col, int currentNumber)
+        {
+            for (int row = 0; row < 9; row++)
+            {
+                if (board[row, col] == currentNumber)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public bool IsboardFull(int[,] board) // Kollar om brädet innehåller en tom plats
         {
             for (int row = 0; row < 9; row++)
