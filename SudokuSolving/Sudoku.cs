@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace SudokuSolver
 {
@@ -38,6 +39,7 @@ namespace SudokuSolver
             {
                 PlaceMatchingNumber();
             }
+
             Console.WriteLine();
             BoardAsText();
 
@@ -59,10 +61,13 @@ namespace SudokuSolver
                         {
                             Board[row, col] = recievedNumber[0];
                             couldPlaceNumber = true;
+                            BoardAsText();
+
                         }
                     }
                 }
             }
+
             if (couldPlaceNumber == false)
             {
                 PlaceOddNumber();
@@ -79,14 +84,22 @@ namespace SudokuSolver
                 {
                     if (Board[row, col] == 0)
                     {
-                        if (CheckRow(row, currentNumber) && CheckColumn(col, currentNumber) && CheckBox(row, col, currentNumber))
+                        currentNumber = 1;
+                        for (int i = 0; i < 9; i++)
                         {
-                            Board[row, col] = currentNumber;
-                            
+                            if (CheckRow(row, currentNumber) && CheckColumn(col, currentNumber) && CheckBox(row, col, currentNumber))
+                            {
+                                Board[row, col] = currentNumber;
+                                PlaceMatchingNumber();
+                                BoardAsText();
+                            }
+                            else
+                            {
+                                currentNumber++;
+                            }
                         }
                     }
                 }
-                currentNumber++;
             }
         }
 
@@ -202,6 +215,9 @@ namespace SudokuSolver
 
         public void BoardAsText() // Printar ut brädet
         {
+            Console.SetCursorPosition(0, 0);
+            Thread.Sleep(60);
+
             for (int row = 0; row < 9; row++)
             {
                 if (row == 3 || row == 6)
