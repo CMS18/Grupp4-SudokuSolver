@@ -13,6 +13,8 @@ namespace SudokuSolver
         public int[,] ResettedBoard = new int[9, 9];
         public readonly int NumberOfStartingNumbers;
         public int Resets { get; set; }
+        public int row = 0;
+        public int column = 0;
 
         public Sudoku(string boardString)
         {
@@ -45,11 +47,56 @@ namespace SudokuSolver
         {
             BoardAsText();
 
-            while (IsboardFull() == false)
+            if (SolveSudoku())
             {
-                PlaceMatchingNumber();
+                Console.Write("\n Beep boop, the Sudoku was solved!\n");
             }
-            Console.Write("\n Det tog \"bara\" {0} resets.. HACKERGOD.exe finished. \n", Resets);
+            else
+            {
+                Console.Write("\n Beep boop, couldn't solve the Sudoku..\n");
+            }
+        }
+
+        bool SolveSudoku()
+        {
+            for (int row = 0; row < 9; row++)
+            {
+                for (int column = 0; column < 9; column++)
+                {
+                    if(Board[row, column] == 0)
+                    {
+                        for (int num = 1; num <= 9; num++)
+                        {
+                            if(IsSafe(row, column, num))
+                            {
+                                Board[row, column] = num;
+                                BoardAsText();
+
+                                if (SolveSudoku()) // Om vi lyckas sätta ut en siffra så anropar vi samma metod igen. 
+                                {
+                                    return true; // 
+                                }
+                                else
+                                {
+                                    Board[row, column] = 0;
+                                    BoardAsText();
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        
+        public bool IsSafe(int row, int column, int currentNumber)
+        {
+            if (CheckRow(row, currentNumber) && CheckColumn(column, currentNumber) && CheckBox(row, column, currentNumber))
+            {
+                return true;
+            }
+            return false;
         }
 
         public void PlaceMatchingNumber()
@@ -78,7 +125,7 @@ namespace SudokuSolver
             {
                 couldPlaceNumber = PlaceRandomNumber();
 
-                if(couldPlaceNumber == false)
+                if (couldPlaceNumber == false)
                 {
                     ResetBoard();
                 }
@@ -110,11 +157,11 @@ namespace SudokuSolver
                             max = minMax.Max();
                         }
 
-                        currentNumber = rnd.Next(min,max);
+                        currentNumber = rnd.Next(min, max);
 
                         for (int i = 0; i < 9; i++)
                         {
-                            if (CheckRow(row, currentNumber) && CheckColumn(column, currentNumber) && CheckBox(row, column, currentNumber))
+                            if (IsSafe(row, column, currentNumber))
                             {
                                 Board[row, column] = currentNumber;
                                 BoardAsText();
@@ -237,8 +284,6 @@ namespace SudokuSolver
             return result.ToArray();
         }
 
-
-
         public bool IsboardFull() // Kollar om brädet innehåller en tom plats
         {
             for (int row = 0; row < 9; row++)
@@ -273,7 +318,6 @@ namespace SudokuSolver
         {
             double percentageCompleted = CalculatePercentageCompleted();
             Console.SetCursorPosition(0, 0);
-            //Thread.Sleep(10);
 
             for (int row = 0; row < 9; row++)
             {
@@ -302,42 +346,9 @@ namespace SudokuSolver
                     }
                 }
             }
-            //Thread.Sleep(10);
+            Thread.Sleep(10);
 
-            Console.Write("\n Thinking.. {0:0.0}% completed.", percentageCompleted);
-        }
-
-        public int[,] FindPossibleEntries(int[,] board, int row, int column)
-        {
-            int[,] possibilitiesArray = new int[9, 9];
-
-            for (int y = 0; y < 9; y++) //Fyller vår possibilitesArray med 0or som grund.
-            {
-                for (int x = 0; x < 9; x++)
-                {
-                    possibilitiesArray[y, x] = 0;
-                }
-            }
-            for (int x = 0; x < 9; x++) //Kollar vågrätt om innehållet är en 0a, annars sätts indexet till en 1a.
-            {
-                if (board[row, x] != 0)
-                {
-                    possibilitiesArray[row, x] = 1;
-                }
-            }
-            for (int y = 0; y < 9; y++) //Kollar horisontellt om innehållet är en 0a, annars sätts indexet till en 1a.
-            {
-                if (board[y, column] != 0)
-                {
-                    possibilitiesArray[y, column] = 1;
-                }
-            }
-
-            int topLeftRow = (row / 3) * 3;
-            int topLeftColumn = (column / 3) * 3;
-
-            return possibilitiesArray;
+            Console.Write("\n Thinking.. {0:0.}% completed.", percentageCompleted);
         }
     }//Class
 } //Namespace
-
