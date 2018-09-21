@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 namespace SudokuSolver
 {
     class Sudoku
     {
         public int[,] Board = new int[9, 9];
-        public int[,] ResettedBoard = new int[9, 9];
+        //public int[,] ResettedBoard = new int[9, 9];
         public readonly int NumberOfStartingNumbers;
-        public int Resets { get; set; }
+        //public int Resets { get; set; }
         public int row = 0;
         public int column = 0;
 
         public Sudoku(string boardString)
         {
-
             int col = 0;
             int row = 0;
 
@@ -26,7 +26,7 @@ namespace SudokuSolver
             {
                 int currentNumber = int.Parse(character.ToString());
                 Board[col, row] = currentNumber;
-                ResettedBoard[col, row] = currentNumber;
+                //ResettedBoard[col, row] = currentNumber;
                 row++;
                 if (row == 9)
                 {
@@ -46,14 +46,17 @@ namespace SudokuSolver
         public void Solve() // Huvudmetoden, körs när programmet startar
         {
             BoardAsText();
-
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             if (SolveSudoku())
             {
-                Console.Write("\n Beep boop, the Sudoku was solved!\n");
+                sw.Stop();
+                Console.Write("\n Beep boop, the Sudoku was solved! It took {0:0.0} seconds.\n", sw.Elapsed.TotalSeconds);
             }
             else
             {
-                Console.Write("\n Beep boop, couldn't solve the Sudoku..\n");
+                sw.Stop();
+                Console.Write("\n Beep boop, couldn't solve the Sudoku.. We tried for {0:0.0} seconds before giving up.\n");
             }
         }
 
@@ -127,7 +130,7 @@ namespace SudokuSolver
 
                 if (couldPlaceNumber == false)
                 {
-                    ResetBoard();
+                    //ResetBoard();
                 }
             }
         }
@@ -179,17 +182,17 @@ namespace SudokuSolver
             return couldPlaceNumber;
         }
 
-        public void ResetBoard()
-        {
-            for (int row = 0; row < 9; row++)
-            {
-                for (int column = 0; column < 9; column++)
-                {
-                    Board[row, column] = ResettedBoard[row, column];
-                }
-            }
-            Resets++;
-        }
+        //public void ResetBoard()
+        //{
+        //    for (int row = 0; row < 9; row++)
+        //    {
+        //        for (int column = 0; column < 9; column++)
+        //        {
+        //            Board[row, column] = ResettedBoard[row, column];
+        //        }
+        //    }
+        //    Resets++;
+        //}
 
         public bool CheckRow(int row, int currentNumber)
         {
@@ -318,6 +321,7 @@ namespace SudokuSolver
         {
             double percentageCompleted = CalculatePercentageCompleted();
             Console.SetCursorPosition(0, 0);
+            //Thread.Sleep(50); Används vid första uppgiften för dramatisk effekt
 
             for (int row = 0; row < 9; row++)
             {
@@ -346,8 +350,7 @@ namespace SudokuSolver
                     }
                 }
             }
-            Thread.Sleep(10);
-
+            //Thread.Sleep(80); //Används vid första lösningen för dramatisk effekt
             Console.Write("\n Thinking.. {0:0.}% completed.", percentageCompleted);
         }
     }//Class
