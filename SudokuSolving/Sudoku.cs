@@ -24,7 +24,13 @@ namespace SudokuSolver
 
             foreach (char character in boardString) // Konstruktorn fyller vår array direkt
             {
-                int currentNumber = int.Parse(character.ToString());
+                int currentNumber = 0;
+
+                if (int.TryParse(character.ToString(), out currentNumber));
+                if (character == '.')
+                {
+                    currentNumber = 0;
+                }
                 Board[col, row] = currentNumber;
                 //ResettedBoard[col, row] = currentNumber;
                 row++;
@@ -48,16 +54,21 @@ namespace SudokuSolver
             BoardAsText();
             Stopwatch sw = new Stopwatch();
             sw.Start();
+           
             if (SolveSudoku())
             {
                 sw.Stop();
+                BoardAsText();
                 Console.Write("\n Beep boop, the Sudoku was solved! It took {0:0.0} seconds.\n", sw.Elapsed.TotalSeconds);
             }
             else
             {
                 sw.Stop();
-                Console.Write("\n Beep boop, couldn't solve the Sudoku.. We tried for {0:0.0} seconds before giving up.\n");
+                BoardAsText();
+
+                Console.Write("\n Beep boop, couldn't solve the Sudoku.. We tried for {0:0.0} seconds before giving up.\n", sw.Elapsed.TotalSeconds);
             }
+
         }
 
         bool SolveSudoku()
@@ -73,7 +84,7 @@ namespace SudokuSolver
                             if(IsSafe(row, column, num))
                             {
                                 Board[row, column] = num;
-                                BoardAsText();
+                                //BoardAsText();
 
                                 if (SolveSudoku()) // Om vi lyckas sätta ut en siffra så anropar vi samma metod igen. 
                                 {
@@ -82,7 +93,7 @@ namespace SudokuSolver
                                 else
                                 {
                                     Board[row, column] = 0;
-                                    BoardAsText();
+                                    //BoardAsText();
                                 }
                             }
                         }
@@ -102,7 +113,7 @@ namespace SudokuSolver
             return false;
         }
 
-        public void PlaceMatchingNumber()
+        public bool PlaceMatchingNumber()
         {
             bool couldPlaceNumber = false;
 
@@ -124,6 +135,7 @@ namespace SudokuSolver
                 }
             }
 
+            return couldPlaceNumber;
             if (couldPlaceNumber == false)
             {
                 couldPlaceNumber = PlaceRandomNumber();

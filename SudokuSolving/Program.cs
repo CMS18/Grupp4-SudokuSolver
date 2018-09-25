@@ -10,9 +10,7 @@ namespace SudokuSolver
     {
         static void Main(string[] args)
         {
-            Sudoku game = new Sudoku("003020600900305001001806400" +
-                                     "008102900700000008006708200" +
-                                     "002609500800203009005010300");
+            Sudoku game = new Sudoku("..9.287..8.6..4..5..3.....46.........2.71345.........23.....5..9..4..8.7..125.3..");
 
             game.Solve();
         }
