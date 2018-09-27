@@ -55,6 +55,7 @@ namespace SudokuSolver
             BoardAsText(5);
             Stopwatch sw = new Stopwatch();
             sw.Start();
+           
             if (SolveSudoku())
             {
                 BoardAsText(20);
@@ -65,6 +66,7 @@ namespace SudokuSolver
                 sw.Stop();
                 Console.Write("\n Beep boop, couldn't solve the Sudoku.. \n");
             }
+
         }
 
         bool SolveSudoku()
@@ -80,6 +82,7 @@ namespace SudokuSolver
                             if (IsSafe(row, column, num))
                             {
                                 Board[row, column] = num;
+                                BoardAsText();
 
                                 if (SolveSudoku()) // Om vi lyckas sätta ut en siffra så anropar vi samma metod igen. 
                                 {
