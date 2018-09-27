@@ -11,9 +11,7 @@ namespace SudokuSolver
     class Sudoku
     {
         public int[,] Board = new int[9, 9];
-        //public int[,] ResettedBoard = new int[9, 9];
         public readonly int NumberOfStartingNumbers;
-        //public int Resets { get; set; }
         public int row = 0;
         public int column = 0;
 
@@ -24,9 +22,18 @@ namespace SudokuSolver
 
             foreach (char character in boardString) // Konstruktorn fyller vår array direkt
             {
-                int currentNumber = int.Parse(character.ToString());
+                int currentNumber = 0;
+
+                if (character == '.')
+                {
+                    currentNumber = 0;
+                }
+                else
+                {
+                    currentNumber = int.Parse(character.ToString());
+                }
+                
                 Board[col, row] = currentNumber;
-                //ResettedBoard[col, row] = currentNumber;
                 row++;
                 if (row == 9)
                 {
@@ -45,18 +52,18 @@ namespace SudokuSolver
 
         public void Solve() // Huvudmetoden, körs när programmet startar
         {
-            BoardAsText();
+            BoardAsText(5);
             Stopwatch sw = new Stopwatch();
             sw.Start();
             if (SolveSudoku())
             {
-                sw.Stop();
-                Console.Write("\n Beep boop, the Sudoku was solved! It took {0:0.0} seconds.\n", sw.Elapsed.TotalSeconds);
+                BoardAsText(20);
+                Console.Write("\n Beep boop, the Sudoku was solved!\n");
             }
             else
             {
                 sw.Stop();
-                Console.Write("\n Beep boop, couldn't solve the Sudoku.. We tried for {0:0.0} seconds before giving up.\n");
+                Console.Write("\n Beep boop, couldn't solve the Sudoku.. \n");
             }
         }
 
@@ -66,33 +73,31 @@ namespace SudokuSolver
             {
                 for (int column = 0; column < 9; column++)
                 {
-                    if(Board[row, column] == 0)
+                    if (Board[row, column] == 0)
                     {
                         for (int num = 1; num <= 9; num++)
                         {
-                            if(IsSafe(row, column, num))
+                            if (IsSafe(row, column, num))
                             {
                                 Board[row, column] = num;
-                                BoardAsText();
 
                                 if (SolveSudoku()) // Om vi lyckas sätta ut en siffra så anropar vi samma metod igen. 
                                 {
-                                    return true; // 
+                                    return true;
                                 }
-                                else
+                                else // Lyckas den inte sätta ut nästa siffra så nollställer vi den vi precis la ut.
                                 {
                                     Board[row, column] = 0;
-                                    BoardAsText();
-                                }
+                                } 
                             }
                         }
                         return false;
                     }
                 }
             }
-            return true;
+            return true; //Om vi kollar igenom alla rader och inte lyckas hitta någon 0a så är brädet färdigt.
         }
-        
+
         public bool IsSafe(int row, int column, int currentNumber)
         {
             if (CheckRow(row, currentNumber) && CheckColumn(column, currentNumber) && CheckBox(row, column, currentNumber))
@@ -102,97 +107,6 @@ namespace SudokuSolver
             return false;
         }
 
-        public void PlaceMatchingNumber()
-        {
-            bool couldPlaceNumber = false;
-
-            for (int row = 0; row < 9; row++)
-            {
-                for (int column = 0; column < 9; column++)
-                {
-                    if (Board[row, column] == 0)
-                    {
-                        int[] recievedNumber = FindPossibleNumbers(row, column);
-
-                        if (recievedNumber.Length == 1 && CheckBox(row, column, recievedNumber[0]))
-                        {
-                            Board[row, column] = recievedNumber[0];
-                            couldPlaceNumber = true;
-                            BoardAsText();
-                        }
-                    }
-                }
-            }
-
-            if (couldPlaceNumber == false)
-            {
-                couldPlaceNumber = PlaceRandomNumber();
-
-                if (couldPlaceNumber == false)
-                {
-                    //ResetBoard();
-                }
-            }
-        }
-
-        public bool PlaceRandomNumber()
-        {
-            int min = 0;
-            int max = 0;
-            int currentNumber = 1;
-            bool couldPlaceNumber = false;
-            Random rnd = new Random();
-
-            for (int row = 0; row < 9; row++)
-            {
-                for (int column = 0; column < 9; column++)
-                {
-                    if (Board[row, column] == 0)
-                    {
-                        int[] minMax = FindPossibleNumbers(row, column);
-                        if (minMax.Length < 2)
-                        {
-                            currentNumber = rnd.Next(1, 10);
-                        }
-                        else
-                        {
-                            min = minMax.Min();
-                            max = minMax.Max();
-                        }
-
-                        currentNumber = rnd.Next(min, max);
-
-                        for (int i = 0; i < 9; i++)
-                        {
-                            if (IsSafe(row, column, currentNumber))
-                            {
-                                Board[row, column] = currentNumber;
-                                BoardAsText();
-                                couldPlaceNumber = true;
-                                PlaceMatchingNumber();
-                            }
-                            //else
-                            //{
-                            //    currentNumber++;
-                            //}
-                        }
-                    }
-                }
-            }
-            return couldPlaceNumber;
-        }
-
-        //public void ResetBoard()
-        //{
-        //    for (int row = 0; row < 9; row++)
-        //    {
-        //        for (int column = 0; column < 9; column++)
-        //        {
-        //            Board[row, column] = ResettedBoard[row, column];
-        //        }
-        //    }
-        //    Resets++;
-        //}
 
         public bool CheckRow(int row, int currentNumber)
         {
@@ -236,56 +150,6 @@ namespace SudokuSolver
             return true;
         }
 
-        public int[] GetNumbersInRow(int row)
-        {
-            List<int> result = new List<int>();
-            for (int i = 0; i < 9; i++)
-            {
-                result.Add(Board[row, i]);
-            }
-
-            return result.ToArray();
-        }
-
-        private int[] GetNumbersInColumn(int column)
-        {
-            List<int> result = new List<int>();
-            for (int i = 0; i < 9; i++)
-            {
-                result.Add(Board[i, column]);
-            }
-
-            return result.ToArray();
-        }
-
-        public int[] FindPossibleNumbers(int row, int column)
-        {
-            List<int> result = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            int[] numbersInRow = GetNumbersInRow(row);
-            int[] numbersInColumn = GetNumbersInColumn(column);
-
-            foreach (int number in numbersInRow)
-            {
-                for (int i = 0; i < 9; i++)
-                {
-                    if (Board[row, i] == number)
-                    {
-                        result.Remove(number);
-                    }
-                }
-            }
-            foreach (int number in numbersInColumn)
-            {
-                for (int i = 0; i < 9; i++)
-                {
-                    if (Board[i, column] == number)
-                    {
-                        result.Remove(number);
-                    }
-                }
-            }
-            return result.ToArray();
-        }
 
         public bool IsboardFull() // Kollar om brädet innehåller en tom plats
         {
@@ -317,11 +181,10 @@ namespace SudokuSolver
             return ((numbersCompleted - NumberOfStartingNumbers) * 10 / (81 - NumberOfStartingNumbers)) * 10;
         }
 
-        public void BoardAsText() // Printar ut brädet
+        public void BoardAsText(int sleepTime) // Printar ut brädet
         {
             double percentageCompleted = CalculatePercentageCompleted();
             Console.SetCursorPosition(0, 0);
-            //Thread.Sleep(50); Används vid första uppgiften för dramatisk effekt
 
             for (int row = 0; row < 9; row++)
             {
@@ -337,6 +200,7 @@ namespace SudokuSolver
                     }
                     else
                     {
+                        Thread.Sleep(sleepTime);
                         Console.Write(" " + Board[row, column] + " ");
 
                     }
@@ -350,7 +214,6 @@ namespace SudokuSolver
                     }
                 }
             }
-            //Thread.Sleep(80); //Används vid första lösningen för dramatisk effekt
             Console.Write("\n Thinking.. {0:0.}% completed.", percentageCompleted);
         }
     }//Class
