@@ -24,7 +24,7 @@ namespace SudokuSolver
         static void Main(string[] args)
         {
 
-            Sudoku game = new Sudoku(medium1);
+            Sudoku game = new Sudoku(easy1);
 
             game.Solve();
         }
