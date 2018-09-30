@@ -31,7 +31,7 @@ namespace SudokuSolver
                     col = 0;
                 }
             }
-            foreach (int number in Board) // Används bara för CalculatePercentageCompleted() metod.
+            foreach (int number in Board) // Används bara för CalculatePercentageCompleted() metoden.
             {
                 if (number != 0)
                 {
@@ -51,7 +51,7 @@ namespace SudokuSolver
                 sw.Stop();
                 BoardAsText(40); //Threadsleep effekt
                 Console.Write("\n Beep boop, the Sudoku was solved! It took {0:0.0} seconds.\n", sw.Elapsed.TotalSeconds);
-                Console.WriteLine("Det tog " + count + " antal försök att lösa.");
+                Console.WriteLine(" Had to backtrack "+ count +" times in order to solve the board.");
                 Console.ReadKey();
             }
             else
@@ -60,7 +60,7 @@ namespace SudokuSolver
                 BoardAsText(40);
 
                 Console.Write("\n Beep boop, couldn't solve the Sudoku.. We tried for {0:0.0} seconds before giving up.\n", sw.Elapsed.TotalSeconds);
-                Console.WriteLine("Det tog " + count + " antal försök att lösa.");
+                Console.WriteLine(" Deleted " + count + " numbers before we gave up.");
                 Console.ReadKey();
             }
 
@@ -78,7 +78,6 @@ namespace SudokuSolver
                         {
                             if (IsValid(row, column, num)) //Lägger in de numret den hittade på den platsen.
                             {
-                                count++;
                                 Board[row, column] = num;
 
                                 if (SolveSudoku()) // Siffran som är valid anropar samma metod igen. 
@@ -89,6 +88,7 @@ namespace SudokuSolver
                                 else
                                 {
                                     Board[row, column] = 0; //Sätter till noll, stega till nästa nummer. mellan 1-9
+                                    count++;
                                 }
                             }
                         }
@@ -185,7 +185,7 @@ namespace SudokuSolver
                     }
                     else
                     {
-                        Thread.Sleep(threadSleep); //Används vid första uppgiften för dramatisk effekt + thread där siffrorna skrivs ut.
+                        Thread.Sleep(threadSleep); //Används för dramatisk effekt.
                         Console.Write(" " + Board[row, column] + " ");
 
                     }

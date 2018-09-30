@@ -16,28 +16,27 @@ namespace SudokuSolver
         public int Resets { get; set; }
         public int row = 0;
         public int column = 0;
-        public int[,] tempBoard;
-
 
         public Sudoku(string boardString)
         {
-
-            int col = 0;
-            int row = 0;
-
             foreach (char character in boardString) // Konstruktorn fyller vår array direkt
             {
-                int currentNumber = int.Parse(character.ToString());
-                Board[col, row] = currentNumber;
-                ResettedBoard[col, row] = currentNumber;
-                row++;
-                if (row == 9)
+                int currentNumber = 0;
+
+                if (int.TryParse(character.ToString(), out currentNumber)) ;
+                if (character == '.')
                 {
-                    col++;
-                    row = 0;
+                    currentNumber = 0;
+                }
+                Board[row, column] = currentNumber;
+                column++;
+                if (column == 9)
+                {
+                    row++;
+                    column = 0;
                 }
             }
-            foreach (int number in Board) // Används bara för min CalculatePercentageCompleted() metod.
+            foreach (int number in Board) // Används bara för CalculatePercentageCompleted() metoden.
             {
                 if (number != 0)
                 {
@@ -56,7 +55,7 @@ namespace SudokuSolver
 
             sw.Stop();
             BoardAsText();
-
+            Console.WriteLine(" I got this far.");
         }
 
         public bool IsSafe(int row, int column, int currentNumber)
@@ -86,14 +85,14 @@ namespace SudokuSolver
                             if ((recievedNumber != 0) && CheckBox(row, column, recievedNumber))
                             {
                                 Board[row, column] = recievedNumber;
-                                BoardAsText();
                                 couldPlace = true;
                             }
                         }
                     }
                 }
 
-            } while (couldPlace == true);
+            } while (couldPlace);
+            BoardAsText();
         }
 
         public void PlaceMatchingNumber2()
@@ -136,7 +135,6 @@ namespace SudokuSolver
 
             } while (couldPlace == true);
         }
-
 
         public void PlaceRandomNumber3()
         {
@@ -347,7 +345,7 @@ namespace SudokuSolver
                     }
                     else
                     {
-                        Thread.Sleep(1);
+                        //Thread.Sleep(1);
 
                         Console.Write(" " + Board[row, column] + " ");
 
