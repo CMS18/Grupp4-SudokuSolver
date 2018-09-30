@@ -58,12 +58,10 @@ namespace SudokuSolver
             {
                 sw.Stop();
                 BoardAsText(40);
-
                 Console.Write("\n Beep boop, couldn't solve the Sudoku.. We tried for {0:0.0} seconds before giving up.\n", sw.Elapsed.TotalSeconds);
                 Console.WriteLine(" Deleted " + count + " numbers before we gave up.");
                 Console.ReadKey();
             }
-
         }
 
         bool SolveSudoku()
@@ -76,31 +74,32 @@ namespace SudokuSolver
                     {
                         for (int num = 9; num > 0; num--)
                         {
-                            if (IsValid(row, column, num)) //Lägger in de numret den hittade på den platsen.
+                            if (IsValid(row, column, num)) // Kollar om num går att sätta in på nuvarande index.
                             {
                                 Board[row, column] = num;
 
-                                if (SolveSudoku()) // Siffran som är valid anropar samma metod igen. 
+                                if (SolveSudoku()) // Lyckas vi sätta ut en siffra så anropar vi metoden igen som hittar ett nytt tomt index, och testar det indexet.
                                 {
-                                    return true; //Cell 0 testar sätta ut tex en 1. Kör sig själv igen. 
-                                    //prova sig fram tills den har en siffra som är valid. IsValid bestämmer vad för siffra som kan testas.
+                                    return true; // Returnerar till förra anropet ("varvet") och till slut till Solve(); när den nått första varvet.
                                 }
                                 else
                                 {
-                                    Board[row, column] = 0; //Sätter till noll, stega till nästa nummer. mellan 1-9
-                                    count++;
+                                    Board[row, column] = 0; // Om ovan anrop inte lyckas sätta ut 1-9 så misslyckas den och returnerar false, då hamnar vi här på förra "varvet".
+                                    count++; // Beräknar antal backtracks.
                                 }
                             }
                         }
-                        return false; //Går inte in i metoden solve sudoku om false. Inser att den inte kan placera 1-9 i cellen
-                        //Backtracking, hoppar ur sig själv och börjar om.
+                        return false; // Om det rekursiva anropet till Solvesudoku misslyckas (Om nästa tomma ruta inte kan sätta in 1-9) 
+                                      // -så returnar vi false. Då nollställs förra siffran via else{}.
+                                      // Om vi backtrackar till första tomma indexet och går igenom 1-9 och inte lyckas sätta ut något, då returnerar vi false till Solve();
                     }
                 }
             }
-            return true; //När sedukon är helt löst. Då blir det true
-        }
+            return true; // Vi kommer hit först när det inte finns ett enda tomt index i hela brädet, annars går vi in i rekursiva metoden eller backtracken. 
+        }                // Denna return går till if (SolveSudoku(), som då hoppar in i return true;
+                         // Den i sin tur returnerar True; till förra varvets anrop. Till slut är den tillbaka på första varvet och då returnerar den true till Solve();
 
-        public bool IsValid(int row, int column, int currentNumber) //kollar rad, kolumn & box efter möjlig siffra.
+        public bool IsValid(int row, int column, int currentNumber) // Kollar rad, kolumn och box för att se om nuvarande siffra går att sätta in på det tomma indexet.
         {
             if (CheckRow(row, currentNumber) && CheckColumn(column, currentNumber) && CheckBox(row, column, currentNumber))
             {
